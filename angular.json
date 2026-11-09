@@ -2,11 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "13a7753b-5beb-4714-a4ea-6e85c9774061"
   },
   "newProjectRoot": "projects",
   "projects": {
-    "e-comerce": {
+    "loja-online": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -26,7 +27,15 @@
             ],
             "styles": [
               "src/styles.css"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "security": {
+              "allowedHosts": []
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -56,10 +65,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "e-comerce:build:production"
+              "buildTarget": "loja-online:build:production"
             },
             "development": {
-              "buildTarget": "e-comerce:build:development"
+              "buildTarget": "loja-online:build:development"
             }
           },
           "defaultConfiguration": "development"

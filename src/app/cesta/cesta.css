@@ -1,0 +1,121 @@
+.titulo-matrix {
+  color: #00ff41;
+  font-family: monospace;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+
+.subtitulo-matrix {
+  color: #bfbfbf;
+}
+
+
+/* CARDS */
+
+.card-matrix {
+  background-color: #111111;
+  color: white;
+
+  border: 1px solid #2d2d2d;
+
+  border-radius: 14px;
+}
+
+
+/* NOME DO PRODUTO */
+
+.produto-nome {
+  color: #00ff41;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+
+/* QUANTIDADE */
+
+.quantidade {
+  min-width: 35px;
+
+  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: bold;
+}
+
+
+/* SUBTOTAL */
+
+.subtotal {
+  color: #00ff41;
+
+  font-size: 18px;
+
+  font-weight: bold;
+}
+
+
+/* TÍTULOS DOS BLOCOS */
+
+.titulo-bloco {
+  color: #00ff41;
+
+  font-family: monospace;
+
+  font-weight: bold;
+}
+
+
+/* LINHA */
+
+hr {
+  border-color: #00ff41;
+  opacity: 0.4;
+}
+
+
+/* TOTAL */
+
+.total-final {
+  color: #00ff41;
+
+  font-size: 22px;
+
+  font-weight: bold;
+}
+
+
+/* ALERTA CARRINHO VAZIO */
+
+.alert-dark {
+  background-color: #111111;
+
+  color: #cccccc;
+
+  border: 1px solid #333333;
+}
+
+
+/* CELULAR */
+
+@media (max-width: 767px) {
+
+  .titulo-matrix {
+    font-size: 30px;
+  }
+
+  .produto-nome {
+    font-size: 18px;
+  }
+
+  .subtotal {
+    font-size: 16px;
+  }
+
+  .total-final {
+    font-size: 19px;
+  }
+
+}
