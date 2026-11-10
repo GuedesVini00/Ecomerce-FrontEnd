@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 
 import { Inicio } from './inicio/inicio';
@@ -7,6 +8,10 @@ import { Cadastro } from './cadastro/cadastro';
 import { Login } from './login/login';
 import { Detalhe } from './detalhe/detalhe';
 import { Pedido } from './pedido/pedido';
+import { MeusPedidos } from './meus-pedidos/meus-pedidos';
+
+// Guard de autenticação
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -22,7 +27,8 @@ export const routes: Routes = [
 
   {
     path: 'cesta',
-    component: Cesta
+    component: Cesta,
+    canActivate: [authGuard]
   },
 
   {
@@ -42,7 +48,14 @@ export const routes: Routes = [
 
   {
     path: 'pedido',
-    component: Pedido
+    component: Pedido,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'meus-pedidos',
+    component: MeusPedidos,
+    canActivate: [authGuard]
   }
 
 ];

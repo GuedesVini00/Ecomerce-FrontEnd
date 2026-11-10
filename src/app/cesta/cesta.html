@@ -1,16 +1,38 @@
+<span style="display: none">
+  {{ versaoCarrinho() }}
+</span>
+
+
 <div class="container py-5">
 
-  <div class="text-center mb-4">
+  <div class="cabecalho-carrinho mb-4">
 
-    <h1 class="titulo-matrix">
-      CARRINHO
-    </h1>
+    <div class="cabecalho-espaco"></div>
 
-    <p class="subtitulo-matrix">
-      Confira os produtos escolhidos
-    </p>
+    <div class="text-center">
+      <h1 class="titulo-matrix">
+        CARRINHO
+      </h1>
+
+      <p class="subtitulo-matrix mb-0">
+        Confira os produtos escolhidos
+      </p>
+    </div>
+
+    <div class="cabecalho-acoes">
+      <button
+        type="button"
+        class="btn-meus-pedidos"
+        (click)="irParaMeusPedidos()">
+
+        <i class="bi bi-box-seam"></i>
+        Meus Pedidos
+
+      </button>
+    </div>
 
   </div>
+
 
 
   <div

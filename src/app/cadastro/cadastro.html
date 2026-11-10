@@ -221,15 +221,15 @@
                   type="text"
                   class="form-control"
                   name="numero"
-                  [(ngModel)]="cliente.numero"
+                  [(ngModel)]="cliente.numeroEndereco"
                   required
                   pattern="[0-9]+"
-                  #numero="ngModel"
+                  #numeroEndereco="ngModel"
                   placeholder="123">
 
                 <div
                   class="text-danger mt-1"
-                  *ngIf="numero.invalid && numero.touched">
+                  *ngIf="numeroEndereco.invalid && numeroEndereco.touched">
 
                   Digite apenas números.
 
@@ -334,9 +334,9 @@
             <button
               type="submit"
               class="btn btn-matrix w-100"
-              [disabled]="formCadastro.invalid">
+              [disabled]="formCadastro.invalid || cadastrando">
 
-              Criar conta
+              {{ cadastrando ? 'Cadastrando...' : 'Criar conta' }}
 
             </button>
 
@@ -344,7 +344,8 @@
             <!-- MENSAGEM -->
 
             <div
-              class="alert alert-success text-center mt-4"
+              class="alert text-center mt-4"
+              [ngClass]="erroCadastro ? 'alert-danger' : 'alert-success'"
               *ngIf="mensagem !== ''">
 
               {{ mensagem }}

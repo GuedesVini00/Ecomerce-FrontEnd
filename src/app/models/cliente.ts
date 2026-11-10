@@ -12,7 +12,7 @@ export class Cliente {
 
   endereco: string = '';
 
-  numero: string = '';
+  numeroEndereco: string = '';
 
   cidade: string = '';
 

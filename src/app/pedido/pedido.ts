@@ -1,261 +1,288 @@
-import { Router } from '@angular/router';
 
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Pedido as PedidoModel } from '../models/pedido';
 import { CestaService } from '../services/cesta';
 
-import { PedidoApiService, CriarPedido } from '../services/pedido-api';
+import {
+  PedidoApiService,
+  CriarPedido
+} from '../services/pedido-api';
+
 import { SessaoService } from '../services/sessao';
-
-
+import { ClienteApiService } from '../services/cliente-api';
 
 @Component({
   selector: 'app-pedido',
-
   imports: [
     CommonModule,
     FormsModule
   ],
-
   templateUrl: './pedido.html',
   styleUrl: './pedido.css'
 })
-export class Pedido {
+export class Pedido implements OnInit {
 
-  pedido: PedidoModel =
-    new PedidoModel();
+  pedido: PedidoModel = new PedidoModel();
 
   mensagem: string = '';
 
   numeroCartao: string = '';
-
   nomeCartao: string = '';
-
   validadeCartao: string = '';
-
   cvv: string = '';
 
   compraFinalizada: boolean = false;
   numeroPedido: number | null = null;
-
+  finalizandoCompra: boolean = false;
 
   constructor(
     private cestaService: CestaService,
     private pedidoApi: PedidoApiService,
     private sessaoService: SessaoService,
+    private clienteApi: ClienteApiService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {
 
     this.pedido.valorProdutos =
-      this.cestaService
-        .calcularTotalProdutos();
+      this.cestaService.calcularTotalProdutos();
 
     this.pedido.desconto =
-      this.cestaService
-        .getDesconto();
+      this.cestaService.getDesconto();
 
     this.pedido.frete =
-      this.cestaService
-        .getFrete();
+      this.cestaService.getFrete();
 
     this.pedido.valorTotal =
-      this.cestaService
-        .calcularTotalFinal();
-
+      this.cestaService.calcularTotalFinal();
   }
 
+  // =====================================
+  // CARREGAR DADOS DO CLIENTE
+  // =====================================
 
-  formatarCep() {
+  ngOnInit(): void {
+    this.carregarDadosCliente();
+  }
 
-    let numeros =
-      this.pedido.cep
-        .replace(/\D/g, '');
+  carregarDadosCliente(): void {
 
+    const clienteId =
+      this.sessaoService.getClienteId();
 
-    if (
-      numeros.length > 8
-    ) {
-
-      numeros =
-        numeros.substring(
-          0,
-          8
-        );
-
+    if (clienteId === null) {
+      this.mensagem = 'Faça login para continuar.';
+      return;
     }
 
+    this.clienteApi.buscarPorId(clienteId).subscribe({
 
-    if (
-      numeros.length <= 5
-    ) {
+      next: (cliente) => {
 
-      this.pedido.cep =
-        numeros;
+        this.pedido.nomeCliente =
+          cliente.nome ?? '';
 
+        this.pedido.cep =
+          cliente.cep ?? '';
+
+        this.pedido.endereco =
+          cliente.endereco ?? '';
+
+        this.pedido.numero =
+          String(cliente.numeroEndereco ?? '');
+
+        this.pedido.cidade =
+          cliente.cidade ?? '';
+
+        this.pedido.estado =
+          cliente.estado ?? '';
+
+        // Formata o CEP automaticamente
+        this.formatarCep();
+
+        this.cd.markForCheck();
+      },
+
+      error: (erro) => {
+
+        console.error(
+          'Erro ao carregar dados do cliente:',
+          erro
+        );
+
+        this.mensagem =
+          'Não foi possível carregar seus dados cadastrais.';
+
+        this.cd.markForCheck();
+      }
+
+    });
+  }
+
+  // =====================================
+  // FORMATAR CEP
+  // =====================================
+
+  formatarCep(): void {
+
+    let numeros =
+      (this.pedido.cep ?? '').replace(/\D/g, '');
+
+    if (numeros.length > 8) {
+      numeros = numeros.substring(0, 8);
+    }
+
+    if (numeros.length <= 5) {
+      this.pedido.cep = numeros;
     } else {
-
       this.pedido.cep =
-        numeros.substring(
-          0,
-          5
-        )
-        + '-'
-        + numeros.substring(
-          5
-        );
-
+        numeros.substring(0, 5) +
+        '-' +
+        numeros.substring(5);
     }
-
   }
 
+  // =====================================
+  // FORMATAR CARTÃO
+  // =====================================
 
-  formatarCartao() {
+  formatarCartao(): void {
 
     let numeros =
-      this.numeroCartao
-        .replace(/\D/g, '');
+      this.numeroCartao.replace(/\D/g, '');
 
-
-    if (
-      numeros.length > 16
-    ) {
-
-      numeros =
-        numeros.substring(
-          0,
-          16
-        );
-
+    if (numeros.length > 16) {
+      numeros = numeros.substring(0, 16);
     }
-
 
     this.numeroCartao =
-      numeros.replace(
-        /(\d{4})(?=\d)/g,
-        '$1 '
-      );
-
+      numeros.replace(/(\d{4})(?=\d)/g, '$1 ');
   }
 
+  // =====================================
+  // FORMATAR VALIDADE
+  // =====================================
 
-  formatarValidade() {
+  formatarValidade(): void {
 
     let numeros =
-      this.validadeCartao
-        .replace(/\D/g, '');
+      this.validadeCartao.replace(/\D/g, '');
 
-
-    if (
-      numeros.length > 4
-    ) {
-
-      numeros =
-        numeros.substring(
-          0,
-          4
-        );
-
+    if (numeros.length > 4) {
+      numeros = numeros.substring(0, 4);
     }
 
-
-    if (
-      numeros.length <= 2
-    ) {
-
-      this.validadeCartao =
-        numeros;
-
+    if (numeros.length <= 2) {
+      this.validadeCartao = numeros;
     } else {
-
       this.validadeCartao =
-        numeros.substring(
-          0,
-          2
-        )
-        + '/'
-        + numeros.substring(
-          2
-        );
+        numeros.substring(0, 2) +
+        '/' +
+        numeros.substring(2);
+    }
+  }
 
+  // =====================================
+  // FINALIZAR COMPRA
+  // =====================================
+
+  finalizarCompra(form: any): void {
+
+    // Impede múltiplos envios
+    if (this.finalizandoCompra || this.compraFinalizada) {
+      return;
     }
 
+    if (!form.valid) {
+      this.mensagem =
+        'Preencha todos os campos corretamente.';
+      return;
+    }
+
+    const clienteId =
+      this.sessaoService.getClienteId();
+
+    if (clienteId === null) {
+      this.mensagem =
+        'Faça login antes de finalizar a compra.';
+      return;
+    }
+
+    if (this.cestaService.sincronizando) {
+      this.mensagem =
+        'Aguarde a atualização do carrinho.';
+      return;
+    }
+
+    const itens = this.cestaService.getItens();
+
+    if (itens.length === 0) {
+      this.mensagem = 'Seu carrinho está vazio.';
+      return;
+    }
+
+    const dadosPedido: CriarPedido = {
+      clienteId: clienteId,
+
+      itens: itens.map(item => ({
+        produtoId: item.produto.id,
+        quantidade: item.quantidade
+      }))
+    };
+
+    this.finalizandoCompra = true;
+    this.mensagem = '';
+
+    this.pedidoApi.criarPedido(dadosPedido).subscribe({
+
+      next: (pedidoCriado) => {
+
+        this.numeroPedido = pedidoCriado.id;
+        this.compraFinalizada = true;
+
+        // Backend já limpou o carrinho no banco
+        this.cestaService.limparCesta();
+
+        this.mensagem = '';
+        this.finalizandoCompra = false;
+
+        this.cd.markForCheck();
+      },
+
+      error: (erro) => {
+
+        console.error(
+          'Erro ao finalizar compra:',
+          erro
+        );
+
+        this.mensagem =
+          erro.error?.mensagem ||
+          'Não foi possível realizar a compra. Tente novamente.';
+
+        this.finalizandoCompra = false;
+
+        this.cd.markForCheck();
+      }
+
+    });
   }
 
+  // =====================================
+  // VOLTAR AO INÍCIO
+  // =====================================
 
-  
-finalizarCompra(form: any) {
-
-  if (!form.valid) {
-    this.mensagem = 'Preencha todos os campos corretamente.';
-    return;
-  }
-
-  const clienteId = this.sessaoService.getClienteId();
-
-  if (clienteId === null) {
-    this.mensagem = 'Faça login antes de finalizar a compra.';
-    return;
-  }
-
-  const itens = this.cestaService.getItens();
-
-  if (itens.length === 0) {
-    this.mensagem = 'Seu carrinho está vazio.';
-    return;
-  }
-
-  const dadosPedido: CriarPedido = {
-    clienteId: clienteId,
-
-    itens: itens.map(item => ({
-      produtoId: item.produto.id,
-      quantidade: item.quantidade
-    }))
-  };
-
-  this.pedidoApi.criarPedido(dadosPedido).subscribe({
-
-  
-  next: (pedidoCriado) => {
-
-  console.log('Cliente ANTES de limpar a cesta:',
-    this.sessaoService.getClienteId());
-
-  this.numeroPedido = pedidoCriado.id;
-  this.compraFinalizada = true;
-  this.mensagem = '';
-
-  this.cestaService.limparCesta();
-  this.cd.markForCheck();
-
-  console.log('Cliente DEPOIS de limpar a cesta:',
-    this.sessaoService.getClienteId());
-
-  
-  },
-
-  error: (erro) => {
-
-    console.error('Erro ao finalizar compra:', erro);
-
-    this.mensagem =
-      erro.error?.mensagem ||
-      'Não foi possível realizar a compra. Tente novamente.';
-
-    this.cd.markForCheck();
-  }
-
-
-  });
-
-}
-
-  voltarInicio() {
-  this.router.navigate(['/']);
+  voltarInicio(): void {
+    this.router.navigate(['/']);
   }
 
 }

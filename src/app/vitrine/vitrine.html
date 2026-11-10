@@ -278,7 +278,7 @@
         <button
           type="button"
           class="btn btn-matrix"
-          (click)="comprar(produtoSelecionado); fecharDetalhes()">
+          (click)="comprar(produtoSelecionado)">
 
           Adicionar ao carrinho
 
@@ -298,4 +298,104 @@
 <div
   class="modal-backdrop show"
   *ngIf="produtoSelecionado">
+</div>
+
+
+<!-- AVISO PARA VISITANTES -->
+
+<div
+  class="modal d-block"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="titulo-aviso-login"
+  *ngIf="mostrarAvisoLogin">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content modal-login-matrix">
+
+      <!-- CABEÇALHO -->
+
+      <div class="modal-header border-0">
+
+        <h5
+          id="titulo-aviso-login"
+          class="modal-title titulo-aviso-login">
+
+          IDENTIFIQUE-SE
+
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Fechar"
+          (click)="fecharAvisoLogin()">
+        </button>
+
+      </div>
+
+      <!-- CONTEÚDO -->
+
+      <div class="modal-body text-center">
+
+        <div class="icone-login-matrix">
+          <i class="bi bi-lock"></i>
+        </div>
+
+        <h4 class="titulo-convite-matrix mb-3">
+          Faça parte da MATRIX!
+        </h4>
+
+        <p class="texto-aviso-login">
+          Para adicionar produtos ao carrinho,
+          você precisa entrar na sua conta
+          ou criar um cadastro.
+        </p>
+
+        <div class="d-grid gap-3 mt-4">
+
+          <button
+            type="button"
+            class="btn btn-matrix"
+            (click)="irParaLogin()">
+
+            Fazer login
+
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            (click)="irParaCadastro()">
+
+            Cadastrar-se
+
+          </button>
+
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-link link-continuar-matrix mt-3"
+          (click)="fecharAvisoLogin()">
+
+          Continuar comprando
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FUNDO DO AVISO DE LOGIN -->
+
+<div
+  class="modal-backdrop show"
+  *ngIf="mostrarAvisoLogin">
 </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap');
+
 .titulo-matrix {
   color: #00ff41;
   font-family: monospace;
@@ -162,3 +164,33 @@
   }
 
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* NOME DO CLIENTE */
+
+.nome-cliente {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  overflow-wrap: anywhere;
+}
+
+/* EMAIL DO CLIENTE */
+
+
+.email-cliente {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #9ca3af;
+  letter-spacing: 0.2px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+
+

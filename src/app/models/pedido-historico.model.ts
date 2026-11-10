@@ -1,16 +1,9 @@
-
-export interface ProdutoHistorico {
-  id: number;
-  nome: string;
-  descricao: string;
-  imagem: string;
-}
-
 export interface ItemPedidoHistorico {
-  id: number;
-  produto: ProdutoHistorico;
+  produtoId: number;
+  nome: string;
   quantidade: number;
   precoUnitario: number;
+  subtotal: number;
 }
 
 export interface PedidoHistorico {

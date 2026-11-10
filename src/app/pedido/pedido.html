@@ -424,14 +424,25 @@
 
             <!-- BOTÃO -->
 
+            
             <button
               type="submit"
               class="btn btn-matrix w-100 mt-4"
-              [disabled]="formPedido.invalid">
+              [disabled]="formPedido.invalid || finalizandoCompra || compraFinalizada">
 
-              Confirmar compra
+              <span
+                *ngIf="finalizandoCompra"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true">
+              </span>
+
+              {{ finalizandoCompra
+                  ? 'Processando pedido...'
+                  : 'Confirmar compra' }}
 
             </button>
+
 
 
             <!-- MENSAGEM DE ERRO -->

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Cliente } from '../models/cliente';
+import { ClienteApiService } from '../services/cliente-api';
 
 
 @Component({
@@ -22,76 +23,70 @@ export class Cadastro {
 
   mensagem: string = '';
 
+  cadastrando: boolean = false;
+
+  erroCadastro: boolean = false;
+
+
+  constructor(
+  private clienteApi: ClienteApiService,
+  private cd: ChangeDetectorRef
+) {}
 
   cadastrar(form: any) {
 
-    if (form.valid) {
+  if (form.invalid) {
+    this.mensagem = 'Verifique os campos do formulário.';
+    this.erroCadastro = true;
+    return;
+  }
 
-      const clientesSalvos =
-        localStorage.getItem(
-          'clientes'
-        );
+  if (this.cadastrando) {
+    return;
+  }
 
+  this.cadastrando = true;
+  this.mensagem = '';
+  this.erroCadastro = false;
 
-      let clientes: Cliente[] = [];
+  const dadosCliente = {
+    ...this.cliente,
+    cpf: this.cliente.cpf.replace(/\D/g, ''),
+    cep: this.cliente.cep.replace(/\D/g, ''),
+    telefone: this.cliente.telefone.replace(/\D/g, '')
+  };
 
+  this.clienteApi.cadastrar(dadosCliente).subscribe({
 
-      if (clientesSalvos) {
+    next: () => {
 
-        const dados =
-          JSON.parse(
-            clientesSalvos
-          );
+      this.mensagem = 'Cadastro realizado com sucesso!';
+      this.erroCadastro = false;
+      this.cadastrando = false;
 
-
-        if (
-          Array.isArray(dados)
-        ) {
-
-          clientes = dados;
-
-        }
-
-      }
-
-
-      const novoCliente =
-        {
-          ...this.cliente
-        };
-
-
-      clientes.push(
-        novoCliente
-      );
-
-
-      localStorage.setItem(
-        'clientes',
-        JSON.stringify(
-          clientes
-        )
-      );
-
-
-      this.mensagem =
-        'Cadastro realizado com sucesso!';
-
-
-      this.cliente =
-        new Cliente();
-
-
+      this.cliente = new Cliente();
       form.resetForm();
 
-    } else {
+      this.cd.markForCheck();
+    },
+
+    error: (erro) => {
+
+      console.error('Erro ao cadastrar cliente:', erro);
 
       this.mensagem =
-        'Verifique os campos do formulário.';
+        erro.error?.mensagem ||
+        'Não foi possível realizar o cadastro. Tente novamente.';
 
+      this.erroCadastro = true;
+      this.cadastrando = false;
+
+      this.cd.markForCheck();
     }
 
-  }
+  });
+
+}
 
 
   formatarTelefone() {

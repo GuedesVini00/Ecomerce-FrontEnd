@@ -1,11 +1,13 @@
 
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 
 import { LoginApiService } from '../services/login-api';
 import { SessaoService } from '../services/sessao';
 import { RecuperacaoSenhaApiService } from '../services/recuperacao-senha-api';
+
+import { CestaService } from '../services/cesta';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +19,8 @@ import { RecuperacaoSenhaApiService } from '../services/recuperacao-senha-api';
   styleUrl: './login.css'
 })
 export class Login {
+
+  private cestaService = inject(CestaService);
 
   constructor(
     private loginApi: LoginApiService,
@@ -78,12 +82,9 @@ export class Login {
 
         this.sessaoService.salvarCliente(cliente);
 
-        this.mensagem = 'Login realizado com sucesso!';
+        this.cestaService.carregarCarrinhoDoBanco();
 
-        console.log(
-          'ID do cliente:',
-          this.sessaoService.getClienteId()
-        );
+        this.mensagem = 'Login realizado com sucesso!';
 
         this.cd.markForCheck();
       },
@@ -325,5 +326,32 @@ export class Login {
       }
 
     });
+
+    
   }
+
+  get clienteLogado() {
+    return this.sessaoService.getCliente();
+  }
+
+
+  sair(): void {
+
+    // Encerra a sessão local
+    this.sessaoService.sair();
+
+    // Limpa apenas os produtos exibidos
+    // Não remove nada do PostgreSQL
+    this.cestaService.limparCesta();
+
+    this.email = '';
+    this.senha = '';
+    this.mensagem = '';
+
+    this.mostrarRecuperacao = false;
+
+    this.cd.markForCheck();
+  }
+
+  
 }
